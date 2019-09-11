@@ -1,4 +1,5 @@
 import csv
+import json
 import sys
 import logging
 import re
@@ -6,8 +7,9 @@ import datetime
 
 logging.basicConfig(filename='SupportBank.log', filemode='w', level=logging.DEBUG)
 
-filename=input('Specify filename')
-# filename = filename+".csv"
+#filename=input('Specify filename')
+filename='Transactions2013.json'
+filetype=filename.split(".")[-1]
 option=input("Select '1' to list value in credit/debit for each employee. Select '2' to list all transactions for a given name")
 
 def rounder(number):
@@ -46,13 +48,36 @@ def sum_all(file,to_index,from_index,val_index):
 
 
 with open(filename) as file:
-    file=csv.reader(file,delimiter=',')
-    header=next(file)
-    date_index=header.index("Date")
-    to_index=header.index("To")
-    from_index=header.index("From")
-    note_index=header.index("Narrative")
-    val_index=header.index("Amount")
+    if filetype == 'json':
+        file = json.load(file)
+        header=[]
+        for key in file[0]:
+            header.append(key.lower())
+    elif filetype == 'csv':
+        file=csv.reader(file,delimiter=',')
+        top_row=next(file)
+        header=[]
+        for word in top_row:
+            header.append(word.lower())
+    i=0
+    for word in header:
+        if 'date' in word:
+            date_index=i
+        elif 'to' in word:
+            to_index=i
+        elif 'from' in word:
+            from_index=i
+        elif 'narrative' in word:
+            note_index=i
+        elif 'amount' in word:
+            val_index=i
+        i=i+1
+    print(header)
+    print(date_index,to_index,from_index,note_index,val_index)
+    print(file)
+    for line in file:
+        print(line)
+    sys.exit()
     if option == '1':
         sum_all(file,to_index,from_index,val_index)
 
