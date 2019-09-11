@@ -12,6 +12,20 @@ filename='Transactions2013.json'
 filetype=filename.split(".")[-1]
 option=input("Select '1' to list value in credit/debit for each employee. Select '2' to list all transactions for a given name")
 
+def datetype1(date):
+    try:
+        datetime.datetime.strptime(date, "%d/%m/%Y")
+        return True
+    except ValueError:
+        return False
+
+def datetype2(date):
+    try:
+        datetime.datetime.strptime(date, "%Y-%m-%d")
+        return True
+    except ValueError:
+        return False
+
 def rounder(number):
     number=round(number,2)
     number=str(number)
@@ -72,12 +86,15 @@ with open(filename) as file:
         elif 'amount' in word:
             val_index=i
         i=i+1
-    print(header)
-    print(date_index,to_index,from_index,note_index,val_index)
-    print(file)
-    for line in file:
-        print(line)
-    sys.exit()
+    if filetype == 'json':
+        outfile=[]
+        for line in file:
+            newline=[]
+            line=line.items()
+            for x in line:
+                newline.append(x[1])
+            outfile.append(newline)
+        file=outfile
     if option == '1':
         sum_all(file,to_index,from_index,val_index)
 
@@ -93,11 +110,18 @@ with open(filename) as file:
                 number=line[val_index]
                 number=float(number)
                 number=rounder(number)
-                try:
-                    datetime.datetime.strptime(line[date_index],"%d/%m/%Y")
-                except ValueError:
-                    print("DATE ON LINE "+str(i)+" IS NOT IN DD-MM-YYYY FORMAT!!")
-                    logging.info(line[date_index]+"on line "+str(i)+" is not a valid date format.")
+                if datetype1(line[date_index]):
+                    pass
+                elif datetype2(line[date_index]):
+                    print(line[date_index])
+                    temp=datetime.datetime.strptime(line[date_index], "%Y-%m-%d")
+                    temp=temp.strftime('%d/%m/%Y')
+                    line[date_index]=str(temp)
+                    print(line[date_index])
+                    print(temp)
+                else:
+                    print("DATE ON LINE " + str(i) + " IS NOT A VALID DATE FORMAT!!")
+                    logging.info(line[date_index] + "on line " + str(i) + " is not a valid date format.")
                 print("Date "+line[date_index]+", Debtor: "+debtor+", Creditor: "+creditor+", Narrative: "+line[note_index]+", Value: £"+number)
             i=i+1
         if not account:
