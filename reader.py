@@ -1,6 +1,9 @@
 import csv
 import sys
 import logging
+import re
+import datetime
+
 logging.basicConfig(filename='SupportBank.log', filemode='w', level=logging.DEBUG)
 
 filename=input('Specify filename')
@@ -15,29 +18,27 @@ def rounder(number):
         number = number + '0'
     return number
 
-def sum_all(file):
-    i = 0
+def sum_all(file,to_index,from_index,val_index):
     names = {}
+    i=1
     for line in file:
-        debtor = line[1]
-        creditor = line[2]
-        if i != 0:
-            try:
-                val = float(line[4])
-            except ValueError:
-                logging.info(line[4]+" is not a valid price. Please check datafile")
-                print("ERROR on line "+str(i+1)+" of file. Check the logfile for more details!")
-
-                continue
-            if debtor in names.keys():
-                names[debtor] = names[debtor] - val
-            else:
-                names[debtor] = -val
-            if creditor in names.keys():
-                names[creditor] = names[creditor] + val
-            else:
-                names[creditor] = val
-        i = i + 1
+        debtor = line[from_index]
+        creditor = line[to_index]
+        try:
+            val = float(line[val_index])
+        except ValueError:
+            logging.info(line[val_index]+" is not a valid price. Please check datafile")
+            print("ERROR on line "+str(i+1)+" of '"+filename+"'. Check the logfile for more details!")
+            continue
+        if debtor in names.keys():
+            names[debtor] = names[debtor] - val
+        else:
+            names[debtor] = -val
+        if creditor in names.keys():
+            names[creditor] = names[creditor] + val
+        else:
+            names[creditor] = val
+        i=i+1
     for name in names:
         final_val=names[name]
         final_val=rounder(final_val)
@@ -46,21 +47,34 @@ def sum_all(file):
 
 with open(filename) as file:
     file=csv.reader(file,delimiter=',')
+    header=next(file)
+    date_index=header.index("Date")
+    to_index=header.index("To")
+    from_index=header.index("From")
+    note_index=header.index("Narrative")
+    val_index=header.index("Amount")
     if option == '1':
-        sum_all(file)
+        sum_all(file,to_index,from_index,val_index)
 
     elif option == '2':
+        i=1
         name = input("Please give name of account holder")
         account = False
         for line in file:
-            debtor = line[1]
-            creditor = line[2]
+            debtor = line[from_index]
+            creditor = line[to_index]
             if name == debtor or name == creditor:
                 account = True
-                number=line[4]
+                number=line[val_index]
                 number=float(number)
                 number=rounder(number)
-                print("Date "+line[0]+" Debtor: "+debtor+" Creditor: "+creditor+" Narrative: "+line[3]+" Value: £"+number)
+                try:
+                    datetime.datetime.strptime(line[date_index],"%d/%m/%Y")
+                except ValueError:
+                    print("DATE ON LINE "+str(i)+" IS NOT IN DD-MM-YYYY FORMAT!!")
+                    logging.info(line[date_index]+"on line "+str(i)+" is not a valid date format.")
+                print("Date "+line[date_index]+", Debtor: "+debtor+", Creditor: "+creditor+", Narrative: "+line[note_index]+", Value: £"+number)
+            i=i+1
         if not account:
             print("Account does not exist!")
     else:
