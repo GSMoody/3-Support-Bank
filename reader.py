@@ -1,6 +1,10 @@
 import csv
 import sys
+import logging
+logging.basicConfig(filename='SupportBank.log', filemode='w', level=logging.DEBUG)
 
+filename=input('Specify filename')
+# filename = filename+".csv"
 option=input("Select '1' to list value in credit/debit for each employee. Select '2' to list all transactions for a given name")
 
 def rounder(number):
@@ -18,7 +22,13 @@ def sum_all(file):
         debtor = line[1]
         creditor = line[2]
         if i != 0:
-            val = float(line[4])
+            try:
+                val = float(line[4])
+            except ValueError:
+                logging.info(line[4]+" is not a valid price. Please check datafile")
+                print("ERROR on line "+str(i+1)+" of file. Check the logfile for more details!")
+
+                continue
             if debtor in names.keys():
                 names[debtor] = names[debtor] - val
             else:
@@ -28,14 +38,13 @@ def sum_all(file):
             else:
                 names[creditor] = val
         i = i + 1
-    print(names)
     for name in names:
         final_val=names[name]
         final_val=rounder(final_val)
         print("Account holder "+name+" has a total balance of £"+final_val)
 
 
-with open('Transactions2014.csv') as file:
+with open(filename) as file:
     file=csv.reader(file,delimiter=',')
     if option == '1':
         sum_all(file)
@@ -56,7 +65,3 @@ with open('Transactions2014.csv') as file:
             print("Account does not exist!")
     else:
         print("Bad Input!")
-
-x = 1 == 1
-
-
