@@ -1,0 +1,4 @@
+INFO:root:User chose to open Transactions2012.xml
+INFO:root:Opening XML file <_io.TextIOWrapper name='Transactions2012.xml' mode='r' encoding='cp1252'>
+INFO:root:User selected View All
+INFO:root:amount is not a valid price. Please check datafile

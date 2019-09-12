@@ -10,32 +10,38 @@ logging.basicConfig(filename='SupportBank.log', filemode='w', level=logging.DEBU
 
 
 
-#filename=input('Specify filename')
-filename='Transactions2012.xml'
+filename=input('Which file would you like to open? ')
+logging.info("User chose to open "+ str(filename))
+#filename='Transactions2012.xml'
 filetype=filename.split(".")[-1]
 option=input("Select '1' to list value in credit/debit for each employee. Select '2' to list all transactions for a given name")
 
+#Function checks if date format is d/m/y, returns true or false
 def datetype1(date):
     try:
         datetime.datetime.strptime(date, "%d/%m/%Y")
         return True
-    except ValueError:
+    except ValueError as error:
+        logging.info(error)
         return False
 
+#Function checks if date format is y-m-d, returns true or false
 def datetype2(date):
     try:
         datetime.datetime.strptime(date, "%Y-%m-%d")
         return True
-    except ValueError:
+    except ValueError as error:
+        logging.info(error)
         return False
 
+#Functions converts xml date format to y-m-d format
 def xmldate(date):
     temp=datetime.date(1900,1,1)
     delta=datetime.timedelta(days=date)
     date=temp+delta
     return date
 
-
+#Function rounds number to 2 d.p
 def rounder(number):
     number=round(number,2)
     number=str(number)
@@ -44,6 +50,7 @@ def rounder(number):
         number = number + '0'
     return number
 
+#Function calculates net balance for each employee
 def sum_all(file,to_index,from_index,val_index):
     names = {}
     i=1
@@ -70,20 +77,23 @@ def sum_all(file,to_index,from_index,val_index):
         final_val=rounder(final_val)
         print("Account holder "+name+" has a total balance of £"+final_val)
 
-
+#Intially determines filetype csv, json or xml
 with open(filename) as file:
     if filetype == 'json':
+        logging.info("Opening JSON file "+ str(file))
         file = json.load(file)
         header=[]
         for key in file[0]:
             header.append(key.lower())
     elif filetype == 'csv':
+        logging.info("Opening CSV file " + str(file))
         file=csv.reader(file,delimiter=',')
         top_row=next(file)
         header=[]
         for word in top_row:
             header.append(word.lower())
     elif filetype == 'xml':
+        logging.info("Opening XML file " + str(file))
         outfile=[]
         header=['date', 'from', 'to', 'narrative', 'amount']
         outfile.append(header)
@@ -112,8 +122,6 @@ with open(filename) as file:
                     line.append(cell.text)
             outfile.append(line)
         file=outfile
-
-    #sys.exit()
     i=0
     for word in header:
         if 'date' in word:
@@ -137,11 +145,14 @@ with open(filename) as file:
             outfile.append(newline)
         file=outfile
     if option == '1':
+        logging.info("User selected View All")
         sum_all(file,to_index,from_index,val_index)
 
     elif option == '2':
+        logging.info("User selected List[Name]")
         i=1
         name = input("Please give name of account holder")
+        logging.info("User inputted account name "+ name)
         account = False
         for line in file:
             debtor = line[from_index]
@@ -164,5 +175,7 @@ with open(filename) as file:
             i=i+1
         if not account:
             print("Account does not exist!")
+            logging.info("User Entered: "+name+". This is not a valid account name!")
     else:
         print("Bad Input!")
+        logging.info("User Entered: "+option+". This is not a valid input!")
