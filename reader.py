@@ -4,11 +4,14 @@ import sys
 import logging
 import re
 import datetime
+import xml.etree.ElementTree as ET
 
 logging.basicConfig(filename='SupportBank.log', filemode='w', level=logging.DEBUG)
 
+
+
 #filename=input('Specify filename')
-filename='Transactions2013.json'
+filename='Transactions2012.xml'
 filetype=filename.split(".")[-1]
 option=input("Select '1' to list value in credit/debit for each employee. Select '2' to list all transactions for a given name")
 
@@ -21,10 +24,17 @@ def datetype1(date):
 
 def datetype2(date):
     try:
-        datetime.datetime.strptime(date, "%Y-%m-%d")
+        datetime.datetime.strftime(date, "%Y-%m-%d")
         return True
     except ValueError:
         return False
+
+def xmldate(date):
+    temp=datetime.date(1900,1,1)
+    delta=datetime.timedelta(days=date)
+    date=temp+delta
+    return date
+
 
 def rounder(number):
     number=round(number,2)
@@ -73,6 +83,37 @@ with open(filename) as file:
         header=[]
         for word in top_row:
             header.append(word.lower())
+    elif filetype == 'xml':
+        outfile=[]
+        header=['date', 'from', 'to', 'narrative', 'amount']
+        tree=ET.parse(filename)
+        root=tree.getroot()
+        for entry in root:
+            line=[]
+            date=list(entry.attrib.items())
+            date=date[0][1]
+            date=int(date)
+            date=xmldate(date)
+            date=str(date)
+            line.append(date)
+            print("Date")
+            for cell in entry:
+                if cell.tag == 'Parties':
+                    print("Parties")
+                    for person in cell:
+                        if person.tag == 'From':
+                            print(person.tag)
+                            print(person[0])
+            for cell in entry:
+                if cell.tag == 'Description':
+                    print("Description")
+            for cell in entry:
+                if cell.tag == 'Value':
+                    print("Value")
+        outfile.append(line)
+        file=outfile
+
+    sys.exit()
     i=0
     for word in header:
         if 'date' in word:
@@ -113,12 +154,9 @@ with open(filename) as file:
                 if datetype1(line[date_index]):
                     pass
                 elif datetype2(line[date_index]):
-                    print(line[date_index])
                     temp=datetime.datetime.strptime(line[date_index], "%Y-%m-%d")
                     temp=temp.strftime('%d/%m/%Y')
                     line[date_index]=str(temp)
-                    print(line[date_index])
-                    print(temp)
                 else:
                     print("DATE ON LINE " + str(i) + " IS NOT A VALID DATE FORMAT!!")
                     logging.info(line[date_index] + "on line " + str(i) + " is not a valid date format.")
