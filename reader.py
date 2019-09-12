@@ -5,14 +5,13 @@ import logging
 import re
 import datetime
 import xml.etree.ElementTree as ET
+from transaction import Transaction
 
 logging.basicConfig(filename='SupportBank.log', filemode='w', level=logging.DEBUG)
 
-
-
-filename=input('Which file would you like to open? ')
+#filename=input('Which file would you like to open? ')
+filename='Transactions2014.csv'
 logging.info("User chose to open "+ str(filename))
-#filename='Transactions2012.xml'
 filetype=filename.split(".")[-1]
 option=input("Select '1' to list value in credit/debit for each employee. Select '2' to list all transactions for a given name")
 
@@ -162,6 +161,7 @@ with open(filename) as file:
                 number=line[val_index]
                 number=float(number)
                 number=rounder(number)
+                Account=Transaction(line[date_index],debtor,creditor,line[note_index],number)
                 if datetype1(line[date_index]):
                     pass
                 elif datetype2(line[date_index]):
@@ -171,7 +171,10 @@ with open(filename) as file:
                 else:
                     print("DATE ON LINE " + str(i) + " IS NOT A VALID DATE FORMAT!!")
                     logging.info(line[date_index] + "on line " + str(i) + " is not a valid date format.")
-                print("Date "+line[date_index]+", Debtor: "+debtor+", Creditor: "+creditor+", Narrative: "+line[note_index]+", Value: £"+number)
+                print(Account)
+                for x in Account:
+                    print(x)
+                #print("Date "+line[date_index]+", Debtor: "+debtor+", Creditor: "+creditor+", Narrative: "+line[note_index]+", Value: £"+number)
             i=i+1
         if not account:
             print("Account does not exist!")

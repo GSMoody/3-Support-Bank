@@ -1,10 +1,15 @@
 class Transaction:
-    def __init__(self, row):
-        self.date = row[0]
-        self.from_account = row[1]
-        self.to_account = row[2]
-        self.narrative = row[3]
-        self.amount = int(row[4])
+    def __init__(self, date,acc_from,acc_to,narrative,amount):
+        self.date = date
+        self.from_account = acc_from
+        self.to_account = acc_to
+        self.narrative = narrative
+        self.amount = float(amount)
 
-    def display(self):
-        print(f"{self.date}: {self.from_account}")
+    def __repr__(self):
+        return f"""********************************************
+        Date: {self.date}
+        From: {self.from_account}
+        To: {self.to_account}
+        Narrative: {self.narrative}
+        Amount: £{self.amount}"""
