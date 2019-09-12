@@ -1,0 +1,138 @@
+********************************************
+        Date: 01/01/2014
+        From: Jon A
+        To: Sarah T
+        Narrative: Pokemon Training
+        Amount: £7.80
+********************************************
+        Date: 07/02/2014
+        From: Jon A
+        To: Sam N
+        Narrative: Beers
+        Amount: £1.65
+********************************************
+        Date: 01/03/2014
+        From: Stephen S
+        To: Jon A
+        Narrative: Coffee
+        Amount: £8.75
+********************************************
+        Date: 23/03/2014
+        From: Jon A
+        To: Sam N
+        Narrative: Lunch
+        Amount: £8.49
+********************************************
+        Date: 06/04/2014
+        From: Jon A
+        To: Stephen S
+        Narrative: Beers
+        Amount: £8.91
+********************************************
+        Date: 03/05/2014
+        From: Jon A
+        To: Gergana I
+        Narrative: Rails Consultancy
+        Amount: £10.51
+********************************************
+        Date: 19/05/2014
+        From: Jon A
+        To: Todd
+        Narrative: Beers
+        Amount: £9.04
+********************************************
+        Date: 01/07/2014
+        From: Rob S
+        To: Jon A
+        Narrative: Lunch
+        Amount: £2.67
+********************************************
+        Date: 06/07/2014
+        From: Sam N
+        To: Jon A
+        Narrative: Beers
+        Amount: £4.37
+********************************************
+        Date: 16/07/2014
+        From: Jon A
+        To: Dan W
+        Narrative: Coffee
+        Amount: £11.75
+********************************************
+        Date: 29/07/2014
+        From: Jon A
+        To: Sam N
+        Narrative: Lunch
+        Amount: £5.31
+********************************************
+        Date: 18/08/2014
+        From: Jon A
+        To: Tim L
+        Narrative: Lego Assistance
+        Amount: £7.22
+********************************************
+        Date: 03/09/2014
+        From: Jon A
+        To: Tim L
+        Narrative: Lunch
+        Amount: £8.13
+********************************************
+        Date: 12/09/2014
+        From: Laura B
+        To: Jon A
+        Narrative: Git-Fu Rendered
+        Amount: £3.11
+********************************************
+        Date: 20/09/2014
+        From: Jon A
+        To: Ben B
+        Narrative: Beers
+        Amount: £3.71
+********************************************
+        Date: 24/09/2014
+        From: Jon A
+        To: Laura B
+        Narrative: Golf Bets
+        Amount: £5.61
+********************************************
+        Date: 30/09/2014
+        From: Jon A
+        To: Dan W
+        Narrative: Sandbox Help
+        Amount: £9.26
+********************************************
+        Date: 23/10/2014
+        From: Jon A
+        To: Dan W
+        Narrative: Lunch
+        Amount: £2.37
+********************************************
+        Date: 11/11/2014
+        From: Jon A
+        To: Ben B
+        Narrative: Stationary Items
+        Amount: £0.73
+********************************************
+        Date: 19/11/2014
+        From: Laura B
+        To: Jon A
+        Narrative: Coffee
+        Amount: £2.61
+********************************************
+        Date: 02/12/2014
+        From: Jon A
+        To: Sam N
+        Narrative: Pokemon Training
+        Amount: £11.04
+********************************************
+        Date: 09/12/2014
+        From: Jon A
+        To: Chris W
+        Narrative: Pokemon Training
+        Amount: £2.26
+********************************************
+        Date: 22/12/2014
+        From: Dan W
+        To: Jon A
+        Narrative: Lunch
+        Amount: £3.66

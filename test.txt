@@ -1,0 +1,24 @@
+********************************************
+        Account holder JON A has a total balance of: £-88.62
+********************************************
+        Account holder SARAH T has a total balance of: £-28.81
+********************************************
+        Account holder STEPHEN S has a total balance of: £37.21
+********************************************
+        Account holder TIM L has a total balance of: £19.82
+********************************************
+        Account holder LAURA B has a total balance of: £-22.30
+********************************************
+        Account holder ROB S has a total balance of: £26.75
+********************************************
+        Account holder BEN B has a total balance of: £33.65
+********************************************
+        Account holder SAM N has a total balance of: £28.50
+********************************************
+        Account holder GERGANA I has a total balance of: £46.37
+********************************************
+        Account holder TODD has a total balance of: £-12.03
+********************************************
+        Account holder CHRIS W has a total balance of: £-44.95
+********************************************
+        Account holder DAN W has a total balance of: £4.41

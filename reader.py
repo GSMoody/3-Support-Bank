@@ -2,10 +2,10 @@ import csv
 import json
 import sys
 import logging
-import re
 import datetime
 import xml.etree.ElementTree as ET
 from transaction import Transaction
+from transaction import TransactionSum
 
 logging.basicConfig(filename='SupportBank.log', filemode='w', level=logging.DEBUG)
 
@@ -13,8 +13,8 @@ logging.basicConfig(filename='SupportBank.log', filemode='w', level=logging.DEBU
 filename='Transactions2014.csv'
 logging.info("User chose to open "+ str(filename))
 filetype=filename.split(".")[-1]
-option=input("Select '1' to list value in credit/debit for each employee. Select '2' to list all transactions for a given name")
-
+option=input("Select '1' to list value in credit/debit for each employee. Select '2' to list all transactions for a given name. Select 3 to exit")
+out=input("Provide filename to write results to (press RETURN to print to terminal)")
 #Function checks if date format is d/m/y, returns true or false
 def datetype1(date):
     try:
@@ -74,7 +74,13 @@ def sum_all(file,to_index,from_index,val_index):
     for name in names:
         final_val=names[name]
         final_val=rounder(final_val)
-        print("Account holder "+name+" has a total balance of £"+final_val)
+        person_sum = TransactionSum(name, final_val)
+        if out:
+            with open(out,'a') as outfile:
+                person_sum=str(person_sum)
+                outfile.write(person_sum+"\n")
+        else:
+            print(person_sum)
 
 #Intially determines filetype csv, json or xml
 with open(filename) as file:
@@ -171,14 +177,19 @@ with open(filename) as file:
                 else:
                     print("DATE ON LINE " + str(i) + " IS NOT A VALID DATE FORMAT!!")
                     logging.info(line[date_index] + "on line " + str(i) + " is not a valid date format.")
+                if out:
+                    with open(out, 'a') as outfile:
+                        Account = str(Account)
+                        outfile.write(Account + "\n")
+                else:
+                    print(Account)
                 print(Account)
-                for x in Account:
-                    print(x)
-                #print("Date "+line[date_index]+", Debtor: "+debtor+", Creditor: "+creditor+", Narrative: "+line[note_index]+", Value: £"+number)
             i=i+1
         if not account:
             print("Account does not exist!")
             logging.info("User Entered: "+name+". This is not a valid account name!")
+    elif option == '3':
+        sys.exit()
     else:
         print("Bad Input!")
         logging.info("User Entered: "+option+". This is not a valid input!")

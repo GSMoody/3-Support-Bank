@@ -4,7 +4,7 @@ class Transaction:
         self.from_account = acc_from
         self.to_account = acc_to
         self.narrative = narrative
-        self.amount = float(amount)
+        self.amount = amount
 
     def __repr__(self):
         return f"""********************************************
@@ -13,3 +13,12 @@ class Transaction:
         To: {self.to_account}
         Narrative: {self.narrative}
         Amount: £{self.amount}"""
+
+class TransactionSum:
+    def __init__(self, name, amount):
+        self.name = name.upper()
+        self.amount = amount
+
+    def __repr__(self):
+        return f"""********************************************
+        Account holder {self.name} has a total balance of: £{self.amount}"""
