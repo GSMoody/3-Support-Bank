@@ -24,7 +24,7 @@ def datetype1(date):
 
 def datetype2(date):
     try:
-        datetime.datetime.strftime(date, "%Y-%m-%d")
+        datetime.datetime.strptime(date, "%Y-%m-%d")
         return True
     except ValueError:
         return False
@@ -86,6 +86,7 @@ with open(filename) as file:
     elif filetype == 'xml':
         outfile=[]
         header=['date', 'from', 'to', 'narrative', 'amount']
+        outfile.append(header)
         tree=ET.parse(filename)
         root=tree.getroot()
         for entry in root:
@@ -96,24 +97,23 @@ with open(filename) as file:
             date=xmldate(date)
             date=str(date)
             line.append(date)
-            print("Date")
             for cell in entry:
                 if cell.tag == 'Parties':
-                    print("Parties")
                     for person in cell:
                         if person.tag == 'From':
-                            print(person.tag)
-                            print(person[0])
+                            line.append(person.text)
+                        elif person.tag == 'To':
+                            line.append(person.text)
             for cell in entry:
                 if cell.tag == 'Description':
-                    print("Description")
+                    line.append(cell.text)
             for cell in entry:
                 if cell.tag == 'Value':
-                    print("Value")
-        outfile.append(line)
+                    line.append(cell.text)
+            outfile.append(line)
         file=outfile
 
-    sys.exit()
+    #sys.exit()
     i=0
     for word in header:
         if 'date' in word:
