@@ -14,6 +14,9 @@ class Transaction:
         Narrative: {self.narrative}
         Amount: £{self.amount}"""
 
+    def export(self):
+        return [self.date, self.from_account, self.to_account, self.narrative, self.amount]
+
 class TransactionSum:
     def __init__(self, name, amount):
         self.name = name.upper()
@@ -22,3 +25,5 @@ class TransactionSum:
     def __repr__(self):
         return f"""********************************************
         Account holder {self.name} has a total balance of: £{self.amount}"""
+    def export(self):
+        return [self.name, self.amount]

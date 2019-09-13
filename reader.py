@@ -8,13 +8,13 @@ from transaction import Transaction
 from transaction import TransactionSum
 
 logging.basicConfig(filename='SupportBank.log', filemode='w', level=logging.DEBUG)
-
 #filename=input('Which file would you like to open? ')
-filename='Transactions2012.xml'
+filename='Transactions2014.csv'
 logging.info("User chose to open "+ str(filename))
 filetype=filename.split(".")[-1]
 option=input("Select '1' to list value in credit/debit for each employee. Select '2' to list all transactions for a given name. Select 3 to exit")
-output_option=input("Provide filename to write results to (press RETURN to print to terminal)")
+output_option=input("Provide filename and type to write results to, e.g 'name.csv' (press RETURN to print to terminal)")
+
 #Function checks if date format is d/m/y, returns true or false
 def datetype1(date):
     try:
@@ -49,6 +49,7 @@ def rounder(number):
         number = number + '0'
     return number
 
+#Function reads into datafile in xml format, and converts list of lists, where each list is a row of data
 def xml_parse(filename):
     input_data = []
     header = ['date', 'from', 'to', 'narrative', 'amount']
@@ -79,6 +80,7 @@ def xml_parse(filename):
         input_data.append(line)
     return header, input_data
 
+#Function reads in datafile in json format, and converts to list of lists where a list is a row of data
 def json_parse(input_data):
     input_data = json.load(input_data)
     header = []
@@ -93,6 +95,7 @@ def json_parse(input_data):
         input_split.append(newline)
     return header, input_split
 
+#Function checks position of each variable on header row, and returns the indices
 def header_check(header):
     i = 0
     for word in header:
@@ -108,6 +111,17 @@ def header_check(header):
             val_index = i
         i = i + 1
     return date_index, to_index, from_index, note_index, val_index
+
+def writer(output_option, object):
+    filetype=output_option.split('.')[-1]
+    row=object.export()
+    with open(output_option,'a') as out:
+        if filetype == 'csv':
+            for item in row:
+                out.write(item+",")
+            out.write("\n")
+    out.close()
+
 
 #Function calculates net balance for each employee
 def sum_all(input_data,to_index,from_index,val_index):
@@ -136,12 +150,11 @@ def sum_all(input_data,to_index,from_index,val_index):
         final_val=rounder(final_val)
         person_sum = TransactionSum(name, final_val)
         if output_option:
-            with open(output_option,'a') as outfile:
-                person_sum=str(person_sum)
-                outfile.write(person_sum+"\n")
+            writer(output_option, person_sum)
         else:
             print(person_sum)
 
+#Function returns all transactions for a given employee
 def PersonFinder(input_data, from_index, to_index, val_index, date_index, note_index, name, output_option):
     i=1
     account = False
@@ -164,16 +177,14 @@ def PersonFinder(input_data, from_index, to_index, val_index, date_index, note_i
                 print("DATE ON LINE " + str(i) + " IS NOT A VALID DATE FORMAT!!")
                 logging.info(line[date_index] + "on line " + str(i) + " is not a valid date format.")
             if output_option:
-                with open(output_option, 'a') as outfile:
-                    Account = str(Account)
-                    outfile.write(Account + "\n")
+                writer(output_option,Account)
             else:
                 print(Account)
-            print(Account)
         i = i + 1
     if not account:
         print("Account does not exist!")
         logging.info("User Entered: " + name + ". This is not a valid account name!")
+
 
 #Intially determines filetype csv, json or xml
 with open(filename) as input_data:
@@ -194,6 +205,13 @@ with open(filename) as input_data:
         input_data=xml_parse(filename)
         header=input_data[0]
         input_data=input_data[1]
+    if output_option:
+        with open(output_option,'w') as out:
+            if filetype == 'csv':
+                for item in header:
+                    out.write(item+",")
+            out.write("\n")
+            out.close()
     columns=header_check(header)
     date_index=columns[0]
     to_index=columns[1]
@@ -201,9 +219,20 @@ with open(filename) as input_data:
     note_index=columns[3]
     val_index=columns[4]
     if option == '1':
+        with open(output_option,'w') as out:
+            if filetype == 'csv':
+                out.write("Employee,Amount\n")
+            out.close()
         logging.info("User selected View All")
         sum_all(input_data,to_index,from_index,val_index)
     elif option == '2':
+        if output_option:
+            with open(output_option, 'w') as out:
+                if filetype == 'csv':
+                    for item in header:
+                        out.write(item + ",")
+                out.write("\n")
+                out.close()
         logging.info("User selected List[Name]")
         name = input("Please provide account holder name")
         logging.info("User inputted account name " + name)
@@ -212,4 +241,4 @@ with open(filename) as input_data:
         sys.exit()
     else:
         print("Bad Input!")
-        logging.info("User Entered: "+option+". This is not a valid input!")
+        logging.info("User Entered: " + option + ". This is not a valid input!")
