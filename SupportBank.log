@@ -1,3 +1,2 @@
 INFO:root:User chose to open Transactions2014.csv
 INFO:root:Opening CSV file <_io.TextIOWrapper name='Transactions2014.csv' mode='r' encoding='cp1252'>
-INFO:root:User selected View All

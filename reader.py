@@ -49,6 +49,22 @@ def rounder(number):
         number = number + '0'
     return number
 
+def header_check(header):
+    i = 0
+    for word in header:
+        if 'date' in word:
+            date_index = i
+        elif 'to' in word:
+            to_index = i
+        elif 'from' in word:
+            from_index = i
+        elif 'narrative' in word:
+            note_index = i
+        elif 'amount' in word:
+            val_index = i
+        i = i + 1
+    return date_index, to_index, from_index, note_index, val_index
+
 #Function calculates net balance for each employee
 def sum_all(input,to_index,from_index,val_index):
     names = {}
@@ -126,20 +142,14 @@ with open(filename) as input:
                 if cell.tag == 'Value':
                     line.append(cell.text)
             input.append(line)
-        #file=outfile
     i=0
-    for word in header:
-        if 'date' in word:
-            date_index=i
-        elif 'to' in word:
-            to_index=i
-        elif 'from' in word:
-            from_index=i
-        elif 'narrative' in word:
-            note_index=i
-        elif 'amount' in word:
-            val_index=i
-        i=i+1
+    columns=header_check(header)
+    date_index=columns[0]
+    to_index=columns[1]
+    from_index=columns[2]
+    note_index=columns[3]
+    val_index=columns[4]
+    sys.exit()
     if filetype == 'json':
         outfile=[]
         for line in input:
