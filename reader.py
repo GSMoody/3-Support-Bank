@@ -14,7 +14,7 @@ filename='Transactions2014.csv'
 logging.info("User chose to open "+ str(filename))
 filetype=filename.split(".")[-1]
 option=input("Select '1' to list value in credit/debit for each employee. Select '2' to list all transactions for a given name. Select 3 to exit")
-out=input("Provide filename to write results to (press RETURN to print to terminal)")
+output_option=input("Provide filename to write results to (press RETURN to print to terminal)")
 #Function checks if date format is d/m/y, returns true or false
 def datetype1(date):
     try:
@@ -50,10 +50,10 @@ def rounder(number):
     return number
 
 #Function calculates net balance for each employee
-def sum_all(file,to_index,from_index,val_index):
+def sum_all(input,to_index,from_index,val_index):
     names = {}
     i=1
-    for line in file:
+    for line in input:
         debtor = line[from_index]
         creditor = line[to_index]
         try:
@@ -75,33 +75,33 @@ def sum_all(file,to_index,from_index,val_index):
         final_val=names[name]
         final_val=rounder(final_val)
         person_sum = TransactionSum(name, final_val)
-        if out:
-            with open(out,'a') as outfile:
+        if output_option:
+            with open(output_option,'a') as outfile:
                 person_sum=str(person_sum)
                 outfile.write(person_sum+"\n")
         else:
             print(person_sum)
 
 #Intially determines filetype csv, json or xml
-with open(filename) as file:
+with open(filename) as input:
     if filetype == 'json':
-        logging.info("Opening JSON file "+ str(file))
-        file = json.load(file)
+        logging.info("Opening JSON file "+ str(input))
+        input = json.load(input)
         header=[]
-        for key in file[0]:
+        for key in input[0]:
             header.append(key.lower())
     elif filetype == 'csv':
-        logging.info("Opening CSV file " + str(file))
-        file=csv.reader(file,delimiter=',')
-        top_row=next(file)
+        logging.info("Opening CSV file " + str(input))
+        input=csv.reader(input,delimiter=',')
+        top_row=next(input)
         header=[]
         for word in top_row:
             header.append(word.lower())
     elif filetype == 'xml':
-        logging.info("Opening XML file " + str(file))
-        outfile=[]
+        logging.info("Opening XML file " + str(input))
+        input=[]
         header=['date', 'from', 'to', 'narrative', 'amount']
-        outfile.append(header)
+        input.append(header)
         tree=ET.parse(filename)
         root=tree.getroot()
         for entry in root:
@@ -125,8 +125,8 @@ with open(filename) as file:
             for cell in entry:
                 if cell.tag == 'Value':
                     line.append(cell.text)
-            outfile.append(line)
-        file=outfile
+            input.append(line)
+        #file=outfile
     i=0
     for word in header:
         if 'date' in word:
@@ -142,16 +142,16 @@ with open(filename) as file:
         i=i+1
     if filetype == 'json':
         outfile=[]
-        for line in file:
+        for line in input:
             newline=[]
             line=line.items()
             for x in line:
                 newline.append(x[1])
             outfile.append(newline)
-        file=outfile
+        input=outfile
     if option == '1':
         logging.info("User selected View All")
-        sum_all(file,to_index,from_index,val_index)
+        sum_all(input,to_index,from_index,val_index)
 
     elif option == '2':
         logging.info("User selected List[Name]")
@@ -159,7 +159,7 @@ with open(filename) as file:
         name = input("Please give name of account holder")
         logging.info("User inputted account name "+ name)
         account = False
-        for line in file:
+        for line in input:
             debtor = line[from_index]
             creditor = line[to_index]
             if name == debtor or name == creditor:
@@ -177,8 +177,8 @@ with open(filename) as file:
                 else:
                     print("DATE ON LINE " + str(i) + " IS NOT A VALID DATE FORMAT!!")
                     logging.info(line[date_index] + "on line " + str(i) + " is not a valid date format.")
-                if out:
-                    with open(out, 'a') as outfile:
+                if output_option:
+                    with open(output_option, 'a') as outfile:
                         Account = str(Account)
                         outfile.write(Account + "\n")
                 else:
