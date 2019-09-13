@@ -10,7 +10,7 @@ from transaction import TransactionSum
 logging.basicConfig(filename='SupportBank.log', filemode='w', level=logging.DEBUG)
 
 #filename=input('Which file would you like to open? ')
-filename='Transactions2014.csv'
+filename='Transactions2012.xml'
 logging.info("User chose to open "+ str(filename))
 filetype=filename.split(".")[-1]
 option=input("Select '1' to list value in credit/debit for each employee. Select '2' to list all transactions for a given name. Select 3 to exit")
@@ -49,6 +49,50 @@ def rounder(number):
         number = number + '0'
     return number
 
+def xml_parse(filename):
+    input_data = []
+    header = ['date', 'from', 'to', 'narrative', 'amount']
+    input_data.append(header)
+    tree = ET.parse(filename)
+    root = tree.getroot()
+    for entry in root:
+        line = []
+        date = list(entry.attrib.items())
+        date = date[0][1]
+        date = int(date)
+        date = xmldate(date)
+        date = str(date)
+        line.append(date)
+        for cell in entry:
+            if cell.tag == 'Parties':
+                for person in cell:
+                    if person.tag == 'From':
+                        line.append(person.text)
+                    elif person.tag == 'To':
+                        line.append(person.text)
+        for cell in entry:
+            if cell.tag == 'Description':
+                line.append(cell.text)
+        for cell in entry:
+            if cell.tag == 'Value':
+                line.append(cell.text)
+        input_data.append(line)
+    return header, input_data
+
+def json_parse(input_data):
+    input_data = json.load(input_data)
+    header = []
+    for key in input_data[0]:
+        header.append(key.lower())
+    input_split = []
+    for line in input_data:
+        newline = []
+        line = line.items()
+        for item in line:
+            newline.append(item[1])
+        input_split.append(newline)
+    return header, input_split
+
 def header_check(header):
     i = 0
     for word in header:
@@ -66,10 +110,10 @@ def header_check(header):
     return date_index, to_index, from_index, note_index, val_index
 
 #Function calculates net balance for each employee
-def sum_all(input,to_index,from_index,val_index):
+def sum_all(input_data,to_index,from_index,val_index):
     names = {}
     i=1
-    for line in input:
+    for line in input_data:
         debtor = line[from_index]
         creditor = line[to_index]
         try:
@@ -98,106 +142,72 @@ def sum_all(input,to_index,from_index,val_index):
         else:
             print(person_sum)
 
+def PersonFinder(input_data, from_index, to_index, val_index, date_index, note_index, name, output_option):
+    i=1
+    account = False
+    for line in input_data:
+        debtor = line[from_index]
+        creditor = line[to_index]
+        if name == debtor or name == creditor:
+            account = True
+            number = line[val_index]
+            number = float(number)
+            number = rounder(number)
+            Account = Transaction(line[date_index], debtor, creditor, line[note_index], number)
+            if datetype1(line[date_index]):
+                pass
+            elif datetype2(line[date_index]):
+                temp = datetime.datetime.strptime(line[date_index], "%Y-%m-%d")
+                temp = temp.strftime('%d/%m/%Y')
+                line[date_index] = str(temp)
+            else:
+                print("DATE ON LINE " + str(i) + " IS NOT A VALID DATE FORMAT!!")
+                logging.info(line[date_index] + "on line " + str(i) + " is not a valid date format.")
+            if output_option:
+                with open(output_option, 'a') as outfile:
+                    Account = str(Account)
+                    outfile.write(Account + "\n")
+            else:
+                print(Account)
+            print(Account)
+        i = i + 1
+    if not account:
+        print("Account does not exist!")
+        logging.info("User Entered: " + name + ". This is not a valid account name!")
+
 #Intially determines filetype csv, json or xml
-with open(filename) as input:
-    if filetype == 'json':
-        logging.info("Opening JSON file "+ str(input))
-        input = json.load(input)
-        header=[]
-        for key in input[0]:
-            header.append(key.lower())
-    elif filetype == 'csv':
-        logging.info("Opening CSV file " + str(input))
-        input=csv.reader(input,delimiter=',')
-        top_row=next(input)
-        header=[]
+with open(filename) as input_data:
+    if filetype == 'csv':
+        logging.info("Opening CSV file " + str(input_data))
+        input_data = csv.reader(input_data, delimiter=',')
+        top_row = next(input_data)
+        header = []
         for word in top_row:
             header.append(word.lower())
+    elif filetype == 'json':
+        logging.info("Opening JSON file "+ str(input_data))
+        input_data = json_parse(input_data)
+        header=input_data[0]
+        input_data=input_data[1]
     elif filetype == 'xml':
-        logging.info("Opening XML file " + str(input))
-        input=[]
-        header=['date', 'from', 'to', 'narrative', 'amount']
-        input.append(header)
-        tree=ET.parse(filename)
-        root=tree.getroot()
-        for entry in root:
-            line=[]
-            date=list(entry.attrib.items())
-            date=date[0][1]
-            date=int(date)
-            date=xmldate(date)
-            date=str(date)
-            line.append(date)
-            for cell in entry:
-                if cell.tag == 'Parties':
-                    for person in cell:
-                        if person.tag == 'From':
-                            line.append(person.text)
-                        elif person.tag == 'To':
-                            line.append(person.text)
-            for cell in entry:
-                if cell.tag == 'Description':
-                    line.append(cell.text)
-            for cell in entry:
-                if cell.tag == 'Value':
-                    line.append(cell.text)
-            input.append(line)
-    i=0
+        logging.info("Opening XML file " + str(input_data))
+        input_data=xml_parse(filename)
+        header=input_data[0]
+        input_data=input_data[1]
     columns=header_check(header)
     date_index=columns[0]
     to_index=columns[1]
     from_index=columns[2]
     note_index=columns[3]
     val_index=columns[4]
-    sys.exit()
-    if filetype == 'json':
-        outfile=[]
-        for line in input:
-            newline=[]
-            line=line.items()
-            for x in line:
-                newline.append(x[1])
-            outfile.append(newline)
-        input=outfile
     if option == '1':
         logging.info("User selected View All")
-        sum_all(input,to_index,from_index,val_index)
-
+        sum_all(input_data,to_index,from_index,val_index)
     elif option == '2':
         logging.info("User selected List[Name]")
-        i=1
-        name = input("Please give name of account holder")
-        logging.info("User inputted account name "+ name)
-        account = False
-        for line in input:
-            debtor = line[from_index]
-            creditor = line[to_index]
-            if name == debtor or name == creditor:
-                account = True
-                number=line[val_index]
-                number=float(number)
-                number=rounder(number)
-                Account=Transaction(line[date_index],debtor,creditor,line[note_index],number)
-                if datetype1(line[date_index]):
-                    pass
-                elif datetype2(line[date_index]):
-                    temp=datetime.datetime.strptime(line[date_index], "%Y-%m-%d")
-                    temp=temp.strftime('%d/%m/%Y')
-                    line[date_index]=str(temp)
-                else:
-                    print("DATE ON LINE " + str(i) + " IS NOT A VALID DATE FORMAT!!")
-                    logging.info(line[date_index] + "on line " + str(i) + " is not a valid date format.")
-                if output_option:
-                    with open(output_option, 'a') as outfile:
-                        Account = str(Account)
-                        outfile.write(Account + "\n")
-                else:
-                    print(Account)
-                print(Account)
-            i=i+1
-        if not account:
-            print("Account does not exist!")
-            logging.info("User Entered: "+name+". This is not a valid account name!")
+        name = input("Please provide account holder name")
+        logging.info("User inputted account name " + name)
+        PersonFinder(input_data, from_index, to_index, val_index, date_index, note_index, name, output_option)
     elif option == '3':
         sys.exit()
     else:

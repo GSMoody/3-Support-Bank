@@ -1,2 +1,28 @@
-INFO:root:User chose to open Transactions2014.csv
-INFO:root:Opening CSV file <_io.TextIOWrapper name='Transactions2014.csv' mode='r' encoding='cp1252'>
+INFO:root:User chose to open Transactions2012.xml
+INFO:root:Opening XML file <_io.TextIOWrapper name='Transactions2012.xml' mode='r' encoding='cp1252'>
+INFO:root:User selected List[Name]
+INFO:root:User inputted account name Jon A
+INFO:root:time data '2012-01-03' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-02-11' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-03-20' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-04-14' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-05-02' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-06-03' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-06-04' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-06-27' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-07-01' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-07-07' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-07-15' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-07-20' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-07-24' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-07-25' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-07-29' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-09-01' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-09-19' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-09-22' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-10-04' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-10-18' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-11-17' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-12-06' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-12-14' does not match format '%d/%m/%Y'
+INFO:root:time data '2012-12-28' does not match format '%d/%m/%Y'
